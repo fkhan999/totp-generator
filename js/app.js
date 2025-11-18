@@ -67,15 +67,17 @@ const app = Vue.createApp({
   methods: {
     update: function () {
       this.updatingIn = this.period - (getCurrentSeconds() % this.period);
+      if (!this.secret_key || this.secret_key.trim() === "") {
+        this.token = "000000";
+        return;
+      }
       this.token = truncateTo(this.totp.generate(), this.digits);
     },
 
     getKeyFromUrl: function () {
-      const key = document.location.hash.replace(/[#\/]+/, '');
-
-      if (key.length > 0) {
-        this.secret_key = key;
-      }
+      const key = location.hash.replace(/[#\/]+/, '');
+      if (key) this.secret_key = key;
+      else this.secret_key = "";
     },
     getQueryParameters: function () {
       const queryParams = parseURLSearch(window.location.search);
